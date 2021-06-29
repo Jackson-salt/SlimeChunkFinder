@@ -1,23 +1,21 @@
-import java.util.Scanner;
-import java.util.Random;
 import java.util.Arrays;
+import java.util.Random;
+import java.util.Scanner;
 
 public class Main
 {
-    static boolean[][] arr;
-    
     public static void main(String[] args)
     {
         Scanner scanner = new Scanner(System.in);
         
         System.out.println("What is your seed?");
-        long seed = scanner.nextLong();
+        int seed = scanner.nextInt();
         
         System.out.println("\nHow many chunks wide on the X axis are you trying to find?");
-        int x = scanner.nextInt();
+        int xChunks = scanner.nextInt();
         
         System.out.println("\nHow many chunks wide on the Z axis are you trying to find?");
-        int z = scanner.nextInt();
+        int zChunks = scanner.nextInt();
         
         System.out.println("\nWhat is the X chunk coordinate of the place you are first searching from?");
         int x1 = scanner.nextInt();
@@ -31,8 +29,7 @@ public class Main
         System.out.println("\nWhat is the Z chunk coordinate of the place you are ending you search from?");
         int z2 = scanner.nextInt();
         
-        int[] xInOrder = {x1, x2};
-        int[] zInOrder = {z1, z2};
+        int[] xInOrder = {x1, x2}, zInOrder = {z1, z2};
         
         Arrays.sort(xInOrder);
         Arrays.sort(zInOrder);
@@ -42,44 +39,33 @@ public class Main
         x2 = xInOrder[1];
         z2 = zInOrder[1];
         
-        arr = new boolean[z][x];
+        boolean[][] arr = new boolean[zChunks][xChunks];
         
-        int xPosition = 0;
-        int zPosition = 0;
-        int xPos = x1;
-        int zPos = z1;
+        int xPos = x1, zPos = z1;
         
-        System.out.println("\nSearching...\n");
+        System.out.println("\nSearching...");
         
         while(true)
         {
-            for(int a = 0; a < arr.length; a++)
+            for(int a = 0; a < zChunks; a++)
             {
-                for(int b = 0; b < arr[0].length; b++)
+                for(int b = 0; b < xChunks; b++)
                 {
-                    xPosition = xPos + b;
-                    zPosition = zPos + a;
-                    
-                    Random ran = new Random(seed + (int) (xPosition * xPosition * 0x4c1906) + (int) (xPosition * 0x5ac0db) + (int) (zPosition * zPosition) * 0x4307a7L + (int) (zPosition * 0x5f24f) ^ 0x3ad8025fL);
-                     
-                    if(ran.nextInt(10) == 0)
-                    {
-                        arr[a][b] = true;
-                    }
+                    arr[a][b] = new Random(seed + (int) ((xPos + b) * (xPos + b) * 0x4c1906) + (int) ((xPos + b) * 0x5ac0db) + (int) ((zPos + a) * (zPos + a)) * 0x4307a7L + (int) ((zPos + a) * 0x5f24f) ^ 0x3ad8025fL).nextInt(10) == 0;
                 }
             }
             
-            if(allTrue())
+            if(!Arrays.deepToString(arr).contains("false"))
             {
-                System.out.println(x + "x" + z + " slime chunk found from chunk coordinates (" + xPos + ", " + zPos + ") to (" + (xPos + arr[0].length) + ", " + (zPos + arr.length) + ").");
+                System.out.println("\n" + xChunks + "x" + zChunks + " slime chunk found from chunk coordinates (" + xPos + ", " + zPos + ") to (" + (xPos + xChunks) + ", " + (zPos + zChunks) + ") on the seed " + seed + ".");
                 break;
             }
             
-            arr = new boolean[z][x];
+            arr = new boolean[zChunks][xChunks];
             
             if(xPos == x2 && zPos == z2)
             {
-                System.out.println("No " + x + "x" + z + " slime chunks found from (" + x1 + ", " + z1 + ") to (" + x2 + ", " + z2 + ").");
+                System.out.println("\nNo " + xChunks + "x" + zChunks + " slime chunks found from (" + x1 + ", " + z1 + ") to (" + x2 + ", " + z2 + ") on the seed " + seed + ".");
                 break;
             }
             
@@ -91,23 +77,5 @@ public class Main
             
             xPos++;
         }
-    }
-    
-    static boolean allTrue()
-    {
-        long i = 0;
-        
-        for(int a = 0; a < arr.length; a++)
-        {
-            for(int b = 0; b < arr[0].length; b++)
-            {
-                if(arr[a][b])
-                {
-                    i++;
-                }
-            }
-        }
-        
-        return i == arr.length * arr[0].length;
     }
 }
