@@ -9,7 +9,7 @@ public class Main
         Scanner scanner = new Scanner(System.in);
         
         System.out.println("What is your seed?");
-        int seed = scanner.nextInt();
+        long seed = scanner.nextInt();
         
         System.out.println("\nHow many chunks wide on the X axis are you trying to find?");
         int xChunks = scanner.nextInt();
